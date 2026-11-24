@@ -4,12 +4,13 @@ import 'package:get/get.dart';
 import 'core/route/app_binding.dart';
 import 'core/utils/app_color.dart';
 import 'features/auth/screen/splash_screen.dart';
+import 'firebase_options.dart';
 
 void main()async {
-  // await Firebase.initializeApp(
-  //   // options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
