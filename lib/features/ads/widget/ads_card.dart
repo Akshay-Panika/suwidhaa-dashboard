@@ -161,24 +161,18 @@ class _AdsCardState extends State<AdsCard> {
     );
     if (file != null) {
       await _stopInlineVideo();
-      _pickedFileName = file.name.isNotEmpty ? file.name : 'ad.png';
-      if (kIsWeb) {
-        _pickedBytes = await file.readAsBytes();
-        _pickedFile = null;
-      } else {
-        _pickedFile = File(file.path);
-        _pickedBytes = null;
-      }
-      _controller.pickedImageBytes.value = _pickedBytes;
-      if (mounted) setState(() {});
-    }
-  }
+      final fileName = file.name.isNotEmpty ? file.name : 'ad.png';
+      final bytes = await file.readAsBytes();
 
-  void _handleBack() {
-    if (widget.onBackToDashboard != null) {
-      widget.onBackToDashboard!();
-    } else {
-      _startNewAdForm();
+      _pickedFileName = fileName;
+      _pickedBytes = bytes;
+      _pickedFile = kIsWeb ? null : File(file.path);
+
+      _controller.pickedImageName.value = fileName;
+      _controller.pickedImageBytes.value = bytes;
+      _controller.imageError.value = false;
+
+      if (mounted) setState(() {});
     }
   }
 
@@ -198,15 +192,28 @@ class _AdsCardState extends State<AdsCard> {
     await _stopInlineVideo();
     _controller.name.value = title;
     _controller.youtubeVideoUrl.value = youtubeUrl;
+    _controller.pickedImageName.value =
+    _pickedFileName.isNotEmpty ? _pickedFileName : 'ad.png';
+
     if (_pickedBytes != null) {
       _controller.pickedImageBytes.value = _pickedBytes;
     }
+
     await _controller.save();
     if (_controller.mode.value == ModuleAdMode.create &&
         _controller.selected.value == null) {
       await _startNewAdForm();
     }
   }
+
+  void _handleBack() {
+    if (widget.onBackToDashboard != null) {
+      widget.onBackToDashboard!();
+    } else {
+      _startNewAdForm();
+    }
+  }
+
 
   Future<void> _deleteAd() async {
     final current = _controller.selected.value;

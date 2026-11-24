@@ -47,7 +47,15 @@ class ModuleAdRepository {
     });
 
     final res = await _dio.post(ApiUrls.moduleAdsCreate, data: formData);
-    return ModuleAdModel.fromJson(res.data['data'] as Map<String, dynamic>);
+    final body = res.data;
+
+    if (body is Map && body['success'] == true && body['data'] is Map) {
+      return ModuleAdModel.fromJson(body['data'] as Map<String, dynamic>);
+    }
+
+    throw Exception(
+      (body is Map ? body['message'] : null) ?? 'Failed to create ad',
+    );
   }
 
   // ── UPDATE (PATCH) ────────────────────────────
